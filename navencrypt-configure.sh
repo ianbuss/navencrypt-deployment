@@ -114,7 +114,11 @@ function prepareClient {
     grep "$mount" /etc/navencrypt/ztab &>/dev/null && err "The location '$mount' is already marked as an encrypted partition. Remove it before continuing."
     test -d $mount || mkdir -p $mount && echo "- Mount target created."
 
-    prepare_command="navencrypt-prepare $storage $mount"
+    echo '- What pass-through mount options would you like for the encrypted partition (e.g. noatime)? []'
+    read mount_opt < /dev/tty
+    test -z $mount_opt || mount_opt="-o $mount_opt"
+
+    prepare_command="navencrypt-prepare $mount_opt $storage $mount"
     printf "\n==================================================\n"
     printf "\nNote! This is the command we will be using to prepare the partition:\n"
     printf "\n\$ $prepare_command\n"

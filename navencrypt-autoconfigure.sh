@@ -30,9 +30,12 @@ keyserver=""
 org=""
 auth=""
 
-# Storage and mount locations (can be either an array or string)
+# Storage and mount locations (can be either an array or string).
+# Mount options correspond to each of the storage/mount locations. Insert an empty string for no
+# mount options
 storage=( "/encrypted/.private" )
 mount=( "/encrypted/mnt" )
+mount_opts=( "-o noatime" )
 
 # Data to encrypt/protect
 to_encrypt=( "/etc/issue" )
@@ -135,7 +138,7 @@ function prepareClient {
             fi
             test -d ${mount[$count]} || mkdir -p ${mount[$count]} && printf "\t- Directory [${mount[$count]}] created.\n"
 
-            prepare_command="navencrypt-prepare ${storage[$count]} ${mount[$count]}"
+            prepare_command="navencrypt-prepare ${mount_opts[$count]} ${storage[$count]} ${mount[$count]}"
             cat $password_file | eval "$prepare_command"
             if [[ $? -ne 0 ]]; then
                 err "Could not prepare directory. Please check command output for more information."
